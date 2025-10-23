@@ -1,5 +1,6 @@
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * Single-Linked node-based implementation of IndexedUnsortedList
@@ -17,20 +18,32 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
     @Override
     public void addToFront(T element) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addToFront'");
+        Node<T> newNode = new Node<T>(element);
+        newNode.setNextNode(head);
+        head = newNode;
+        if (tail == null) { //isEmpty is risky, if head==null was test for isEmpty, that would not work
+            tail = newNode;
+        }
+        size++;
     }
 
     @Override
     public void addToRear(T element) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addToRear'");
+        Node<T> newNode = new Node<T>(element);
+        if (tail != null) {
+            tail.setNextNode(newNode);
+        }
+        else {
+            head = newNode;
+        }
+        tail.setNextNode(newNode);
+        tail = newNode;
+        size++;
     }
 
     @Override
     public void add(T element) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'add'");
+        addToRear(element);
     }
 
     @Override
@@ -47,8 +60,16 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
     @Override
     public T removeFirst() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeFirst'");
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        Node<T> firstNode = head;
+        head = head.getNextNode();
+        if (head == null){ //just removed the only node from a list
+            tail = null; //Tail also needs to be null because the list is now empty
+        }
+        size --;
+        return firstNode.getElement();
     }
 
     @Override
@@ -77,44 +98,59 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
     @Override
     public T get(int index) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'get'");
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+        Node<T> currentNode = head;
+        for (int i = 0; i < index; i++) {
+            currentNode = currentNode.getNextNode();
+        }
+        return currentNode.getElement();
     }
 
     @Override
     public int indexOf(T element) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'indexOf'");
+        int index = 0;
+        Node<T> currentNode = head; //Start at the beginning, head is the first node we ill look at
+        while (currentNode != null && !element.equals(currentNode.getElement())) { //either I found it or i didnt
+            currentNode = currentNode.getNextNode();
+            index++;
+        }
+        if (currentNode == null) { //Did not find it, OR index >= size()
+            index = -1;
+        }
+        return index;
     }
 
     @Override
     public T first() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'first'");
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return head.getElement();
     }
 
     @Override
     public T last() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'last'");
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return tail.getElement();
     }
 
     @Override
     public boolean contains(T target) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'contains'");
+        return indexOf(target) > -1;
     }
 
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isEmpty'");
+        return size == 0; //Could also do: head == null; OR tail == null; OR size() == 0;
     }
 
     @Override
     public int size() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'size'");
+        return size;
     }
 
     @Override

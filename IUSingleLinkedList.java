@@ -49,24 +49,28 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
     @Override
     public void addAfter(T element, T target) {
         Node<T> newNode = new Node<T>(element);
-        //Special conditions
-        //if the lsit is empty
-        if (isEmpty() || !contains(target)){
+        if (isEmpty() || !contains(target)) { //If the list is empty, or it does not contain the target element
             throw new NoSuchElementException();
         }
-        // if the element is not in the list
-        //General conditions
         int index = indexOf(target);
         Node<T> currentNode = head;
         for (int i = 0; i < index; i++) {
             currentNode = currentNode.getNextNode();
         }
-        Node<T> continueNode = currentNode.getNextNode(); //The new node will point to this node
-        currentNode.setNextNode(newNode); //Add the new node to the existing set
-        currentNode = currentNode.getNextNode(); //set current node to the new node
-        currentNode.setNextNode(continueNode);//Point the new node to the existing nodes
-        //if the new element is added to the end of the list 
-        //if there was only one element in the list
+        if (size > 1) {
+            if (currentNode.getNextNode() == null) { // If it is being added to end of the list
+                currentNode.setNextNode(newNode);
+                tail = newNode;
+            } else { //General case, added to the middle of a list
+                Node<T> continueNode = currentNode.getNextNode(); // The new node will point to this node
+                currentNode.setNextNode(newNode); // Add the new node to the existing set
+                currentNode = currentNode.getNextNode(); // set current node to the new node
+                currentNode.setNextNode(continueNode);// Point the new node to the existing nodes
+            }
+        } else { // If there is only 1 element in the list
+            currentNode.setNextNode(newNode);
+            tail = newNode;
+        }
         size++;
     }
 
@@ -150,12 +154,12 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             // 'general case'- middle of long list
             currentNode.setNextNode(currentNode.getNextNode().getNextNode());
 
-            //Was it the last node?
+            // Was it the last node?
             if (currentNode.getNextNode() == null) {
                 tail = currentNode;
             }
         }
-        
+
         // End of a list
 
         // only element
@@ -172,13 +176,13 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
     @Override
     public void set(int index, T element) {
-        //If the list is empty
-        //if the index is out of bounds
+        // If the list is empty
+        // if the index is out of bounds
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         }
         Node<T> currentNode = head;
-        for(int i = 0; i < index; i++) { //Iterate to the node to change
+        for (int i = 0; i < index; i++) { // Iterate to the node to change
             currentNode = currentNode.getNextNode();
         }
         currentNode.setElement(element);

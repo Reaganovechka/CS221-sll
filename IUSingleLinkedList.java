@@ -245,6 +245,21 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
     }
 
     @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        for (Node<T> node : this) {
+            str.append(node.toString());
+            str.append(", ");
+        }
+        if (!isEmpty()) {
+            str.delete(str.length() - 2, str.length());
+        }
+        str.append("]");
+        return str.toString();
+    }
+
+    @Override
     public Iterator<T> iterator() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'iterator'");

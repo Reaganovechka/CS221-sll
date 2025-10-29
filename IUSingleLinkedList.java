@@ -36,7 +36,6 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
         } else {
             head = newNode;
         }
-        tail.setNextNode(newNode);
         tail = newNode;
         size++;
     }

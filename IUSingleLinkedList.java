@@ -1,3 +1,4 @@
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
@@ -11,10 +12,12 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
     private Node<T> head;
     private Node<T> tail;
     private int size;
+    private int modCount;
 
     public IUSingleLinkedList() {
         head = tail = null;
         size = 0;
+        modCount = 0;
     }
 
     @Override
@@ -26,6 +29,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             tail = newNode;
         }
         size++;
+        modCount++;
     }
 
     @Override
@@ -38,6 +42,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
         }
         tail = newNode;
         size++;
+        modCount++;
     }
 
     @Override
@@ -48,7 +53,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
     @Override
     public void addAfter(T element, T target) {
         Node<T> newNode = new Node<T>(element);
-        if (isEmpty() || !contains(target)) { //If the list is empty, or it does not contain the target element
+        if (isEmpty() || !contains(target)) { // If the list is empty, or it does not contain the target element
             throw new NoSuchElementException();
         }
         int index = indexOf(target);
@@ -60,7 +65,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             if (currentNode.getNextNode() == null) { // If it is being added to end of the list
                 currentNode.setNextNode(newNode);
                 tail = newNode;
-            } else { //General case, added to the middle of a list
+            } else { // General case, added to the middle of a list
                 Node<T> continueNode = currentNode.getNextNode(); // The new node will point to this node
                 currentNode.setNextNode(newNode); // Add the new node to the existing set
                 currentNode = currentNode.getNextNode(); // set current node to the new node
@@ -71,6 +76,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             tail = newNode;
         }
         size++;
+        modCount++;
     }
 
     @Override
@@ -90,6 +96,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             tail = null; // Tail also needs to be null because the list is now empty
         }
         size--;
+        modCount++;
         return firstNode.getElement();
     }
 
@@ -111,6 +118,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             head = tail = null;
         }
         size--;
+        modCount++;
         return retVal;
     }
 
@@ -157,6 +165,11 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             if (currentNode.getNextNode() == null) {
                 tail = currentNode;
             }
+
+            // Was it the only element?
+            if (head == tail) {
+
+            }
         }
 
         // End of a list
@@ -164,6 +177,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
         // only element
 
         size--;
+        modCount++;
         return retVal;
     }
 
@@ -185,6 +199,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             currentNode = currentNode.getNextNode();
         }
         currentNode.setElement(element);
+        modCount++;
     }
 
     @Override
@@ -263,20 +278,84 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
     @Override
     public Iterator<T> iterator() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'iterator'");
+        return new SLLIterator();
     }
 
     @Override
     public ListIterator<T> listIterator() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'listIterator'");
     }
 
     @Override
     public ListIterator<T> listIterator(int startingIndex) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'listIterator'");
     }
 
+    /**
+     * Basic Iterator for IUSingleLinkedList
+     */
+    private class SLLIterator implements Iterator<T> {
+        private Node<T> nextNode;
+        private int iterModCount;
+        private boolean canRemove;
+
+        /** Intitialize iterator before the first node */
+        public SLLIterator() {
+            nextNode = head;
+            iterModCount = modCount;
+            canRemove = false;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (iterModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+            return nextNode != null;
+        }
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            T retVal = nextNode.getElement();
+            nextNode = nextNode.getNextNode();
+            canRemove = true;
+            return retVal;
+        }
+
+        @Override
+        public void remove() {
+            if (iterModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+            if (!canRemove) {
+                throw new IllegalStateException();
+            }
+            canRemove = false;
+            // If the node to be removed is the second elem
+            if (head.getNextNode() == nextNode) { // Need to remove first element/head
+                head = head.getNextNode();
+                if (head == null) { //or size == 1;
+                    tail = null;
+                }
+            } else {
+                // general case - first 'previousPreviousNode'
+                Node<T> prevPrevNode = head;
+                while (prevPrevNode.getNextNode().getNextNode() != nextNode) { // Finds the prev prev node
+                    prevPrevNode = prevPrevNode.getNextNode();
+                }
+                prevPrevNode.setNextNode(nextNode);
+                if (prevPrevNode.getNextNode() == null) { //If the last element was removed
+                    tail = prevPrevNode;
+                }
+            }
+            size--;
+            modCount++;
+            iterModCount++;
+
+        }
+
+    }
 }

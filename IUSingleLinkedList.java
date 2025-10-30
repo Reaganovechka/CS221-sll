@@ -248,9 +248,11 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
     public String toString() {
         StringBuilder str = new StringBuilder();
         str.append("[");
-        for (Node<T> node : this) {
-            str.append(node.toString());
+        Node<T> currentNode = head;
+        for (int i = 0; i < size; i++) {
+            str.append(currentNode.toString());
             str.append(", ");
+            currentNode = currentNode.getNextNode();
         }
         if (!isEmpty()) {
             str.delete(str.length() - 2, str.length());

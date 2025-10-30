@@ -44,4 +44,7 @@ public class Node<T> {
         this.element = element;
     }
 
+    public String toString() {
+        return this.element.toString();
+    }
 }

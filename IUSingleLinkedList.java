@@ -168,7 +168,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
             // Was it the only element?
             if (head == tail) {
-
+                currentNode = null;
             }
         }
 
@@ -183,8 +183,33 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
     @Override
     public T remove(int index) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'remove'");
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        // General case- middle of the list
+        Node<T> currentNode = head;
+        for (int i = 0; i < index - 1; i++) { // Get the node before the node to be removed
+            currentNode = currentNode.getNextNode();
+        }
+        T retVal = currentNode.getElement();
+        if (currentNode == head && head == tail){ // If removing the ONLY element in the list
+            currentNode = null;
+        }
+        else if (currentNode == head) { // If removing the head element
+            head = currentNode.getNextNode();
+        } else {
+            currentNode.setNextNode(currentNode.getNextNode().getNextNode()); // Link the current node to the node AFTER the removed node
+            if (currentNode.getNextNode() == null) { // If the last element was removed
+                tail = currentNode;
+            }
+        }
+        size--;
+        modCount++;
+        return retVal;
     }
 
     @Override
@@ -337,7 +362,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             // If the node to be removed is the second elem
             if (head.getNextNode() == nextNode) { // Need to remove first element/head
                 head = head.getNextNode();
-                if (head == null) { //or size == 1;
+                if (head == null) { // or size == 1;
                     tail = null;
                 }
             } else {
@@ -347,7 +372,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
                     prevPrevNode = prevPrevNode.getNextNode();
                 }
                 prevPrevNode.setNextNode(nextNode);
-                if (prevPrevNode.getNextNode() == null) { //If the last element was removed
+                if (prevPrevNode.getNextNode() == null) { // If the last element was removed
                     tail = prevPrevNode;
                 }
             }

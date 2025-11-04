@@ -371,12 +371,18 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             if (iterModCount != modCount) {
                 throw new ConcurrentModificationException();
             }
+            if (isEmpty()) {
+                return false;
+            }
             return nextNode != null;
         }
 
         @Override
         public T next() {
             if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            if (isEmpty()){
                 throw new NoSuchElementException();
             }
             T retVal = nextNode.getElement();

@@ -286,7 +286,7 @@ public class ListTester {
 	 * @return [B] after set(0, B)
 	 */
 	private IndexedUnsortedList<Integer> A_set0B_B() {
-		IndexedUnsortedList<Integer> list = newList();
+		IndexedUnsortedList<Integer> list = emptyList_addToFrontA_A();
 		list.set(0, ELEMENT_B);
 		return list;
 	}

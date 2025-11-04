@@ -242,30 +242,6 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             currentNode.setNextNode(continueNode);
         }
 
-        // if (isEmpty()) {
-        // // throw new NoSuchElementException();
-        // // }
-        // if (index < 0 || index >= size) {
-        // throw new IndexOutOfBoundsException();
-        // }
-
-        // // General case- middle of the list
-        // Node<T> currentNode = head;
-        // for (int i = 0; i < index - 1; i++) { // Get the node before the node to be removed
-        // currentNode = currentNode.getNextNode();
-        // }
-        // T retVal = currentNode.getNextNode().getElement();
-        // if (currentNode == head && head == tail) { // If removing the ONLY element in the list
-        // currentNode = null;
-        // } else if (currentNode == head) { // If removing the head element
-        // head = currentNode.getNextNode();
-        // } else {
-        // currentNode.setNextNode(currentNode.getNextNode().getNextNode()); // Link the current node to the node AFTER
-        // // the removed node
-        // if (currentNode.getNextNode() == null) { // If the last element was removed
-        // tail = currentNode;
-        // }
-        // }
         size--;
         modCount++;
         return retVal;

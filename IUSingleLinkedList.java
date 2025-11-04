@@ -88,17 +88,15 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
         if (isEmpty() && index == 0) { // If the list is empty and the index is 0
             head = newNode;
             tail = newNode;
-        }else if (size == 1){
+        } else if (size == 1) {
             if (index == 0) {
                 head = newNode;
                 newNode.setNextNode(tail);
-            }
-            else {
+            } else {
                 head.setNextNode(newNode);
                 tail = newNode;
             }
-        }
-         else { // List larger than 1 element
+        } else { // List larger than 1 element
             Node<T> currentNode = head;
             for (int i = 0; i < index - 1; i++) {
                 currentNode = currentNode.getNextNode();
@@ -106,17 +104,15 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             if (currentNode == head && index == 0) { // Add at index 0 in a longer list
                 newNode.setNextNode(currentNode);
                 newNode = head;
-            }
-            else if (currentNode == tail) { // Adding to end of the list
+            } else if (currentNode == tail) { // Adding to end of the list
                 currentNode.setNextNode(newNode);
                 tail = newNode;
-            }
-            else { // General Case
-            Node<T> continueNode = currentNode.getNextNode();
-            // Link the nodes
-            currentNode.setNextNode(newNode);
-            currentNode = currentNode.getNextNode();
-            currentNode.setNextNode(continueNode);
+            } else { // General Case
+                Node<T> continueNode = currentNode.getNextNode();
+                // Link the nodes
+                currentNode.setNextNode(newNode);
+                currentNode = currentNode.getNextNode();
+                currentNode.setNextNode(continueNode);
             }
         }
 
@@ -199,21 +195,17 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             }
             // 'general case'- middle of long list
             currentNode.setNextNode(currentNode.getNextNode().getNextNode());
-
+            // Was it the only element?
+            if (head == tail) {
+                currentNode = null;
+            }
             // Was it the last node?
             if (currentNode.getNextNode() == null) {
                 tail = currentNode;
             }
 
-            // Was it the only element?
-            if (head == tail) {
-                currentNode = null;
-            }
+            
         }
-
-        // End of a list
-
-        // only element
 
         size--;
         modCount++;
@@ -222,51 +214,57 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
     @Override
     public T remove(int index) {
-        T retVal;
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         }
 
-        //General Case
+        // General Case
         Node<T> currentNode = head;
-        for (int i = 0; i < index - 1; i++){
+        for (int i = 0; i < index - 1; i++) {
             currentNode = currentNode.getNextNode();
         }
+        T retVal = null;
         // If removed only elem
-        if (currentNode == head && head == tail){ // Removing the first and ONLY element
+        if (currentNode == head && head == tail) { // Removing the first and ONLY element
             retVal = currentNode.getElement();
             currentNode = null;
+        } else if (currentNode == head && index == 0) {// If removed first elem
+            retVal = head.getElement();
+            head = currentNode.getNextNode();
         }
-        retVal = currentNode.getNextNode().getElement();
-        // If removed first elem
-        // If removed last elem
-        Node<T> continueNode = currentNode.getNextNode().getNextNode(); // Node after the one to be removed
-        currentNode.setNextNode(continueNode); 
+        else if (currentNode.getNextNode() == tail) {// If removed last elem
+            retVal = tail.getElement();
+            currentNode.setNextNode(null);
+            tail = currentNode;
+        } else { // General case
+            retVal = currentNode.getNextNode().getElement();
+            Node<T> continueNode = currentNode.getNextNode().getNextNode(); // Node after the one to be removed
+            currentNode.setNextNode(continueNode);
+        }
 
-
-        // // if (isEmpty()) {
-        // // //     throw new NoSuchElementException();
-        // // // }
+        // if (isEmpty()) {
+        // // throw new NoSuchElementException();
+        // // }
         // if (index < 0 || index >= size) {
-        //     throw new IndexOutOfBoundsException();
+        // throw new IndexOutOfBoundsException();
         // }
 
         // // General case- middle of the list
         // Node<T> currentNode = head;
         // for (int i = 0; i < index - 1; i++) { // Get the node before the node to be removed
-        //     currentNode = currentNode.getNextNode();
+        // currentNode = currentNode.getNextNode();
         // }
         // T retVal = currentNode.getNextNode().getElement();
         // if (currentNode == head && head == tail) { // If removing the ONLY element in the list
-        //     currentNode = null;
+        // currentNode = null;
         // } else if (currentNode == head) { // If removing the head element
-        //     head = currentNode.getNextNode();
+        // head = currentNode.getNextNode();
         // } else {
-        //     currentNode.setNextNode(currentNode.getNextNode().getNextNode()); // Link the current node to the node AFTER
-        //                                                                       // the removed node
-        //     if (currentNode.getNextNode() == null) { // If the last element was removed
-        //         tail = currentNode;
-        //     }
+        // currentNode.setNextNode(currentNode.getNextNode().getNextNode()); // Link the current node to the node AFTER
+        // // the removed node
+        // if (currentNode.getNextNode() == null) { // If the last element was removed
+        // tail = currentNode;
+        // }
         // }
         size--;
         modCount++;

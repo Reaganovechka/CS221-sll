@@ -204,7 +204,6 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
                 tail = currentNode;
             }
 
-            
         }
 
         size--;
@@ -231,8 +230,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
         } else if (currentNode == head && index == 0) {// If removed first elem
             retVal = head.getElement();
             head = currentNode.getNextNode();
-        }
-        else if (currentNode.getNextNode() == tail) {// If removed last elem
+        } else if (currentNode.getNextNode() == tail) {// If removed last elem
             retVal = tail.getElement();
             currentNode.setNextNode(null);
             tail = currentNode;
@@ -384,7 +382,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            if (isEmpty()){
+            if (isEmpty()) {
                 throw new NoSuchElementException();
             }
             T retVal = nextNode.getElement();

@@ -103,7 +103,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
             }
             if (currentNode == head && index == 0) { // Add at index 0 in a longer list
                 newNode.setNextNode(currentNode);
-                newNode = head;
+                head = newNode;
             } else if (currentNode == tail) { // Adding to end of the list
                 currentNode.setNextNode(newNode);
                 tail = newNode;
@@ -323,11 +323,13 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
     public String toString() {
         StringBuilder str = new StringBuilder();
         str.append("[");
-        Node<T> currentNode = head;
-        for (int i = 0; i < size; i++) {
-            str.append(currentNode.toString());
+        // for (int i = 0; i < rear; i++) {
+        // str.append(array[i].toString());
+        // str.append(", ");
+        // }
+        for (T element : this) {
+            str.append(element.toString());
             str.append(", ");
-            currentNode = currentNode.getNextNode();
         }
         if (!isEmpty()) {
             str.delete(str.length() - 2, str.length());

@@ -222,6 +222,7 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
 
     @Override
     public T remove(int index) {
+        T retVal;
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         }
@@ -231,7 +232,14 @@ public class IUSingleLinkedList<T> implements IndexedUnsortedList<T> {
         for (int i = 0; i < index - 1; i++){
             currentNode = currentNode.getNextNode();
         }
-        T retVal = currentNode.getNextNode().getElement();
+        // If removed only elem
+        if (currentNode == head && head == tail){ // Removing the first and ONLY element
+            retVal = currentNode.getElement();
+            currentNode = null;
+        }
+        retVal = currentNode.getNextNode().getElement();
+        // If removed first elem
+        // If removed last elem
         Node<T> continueNode = currentNode.getNextNode().getNextNode(); // Node after the one to be removed
         currentNode.setNextNode(continueNode); 
 
